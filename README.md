@@ -1,0 +1,2 @@
+# logger
+Simple static logger
