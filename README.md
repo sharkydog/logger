@@ -38,5 +38,23 @@ Destruct logs when objects are being destroyed, in three ways.
 - If `$object` is an object and PHP version is 7.4, the Handle is set as a dynamic property to the object,
   named `SharkyDog\Log\Handle(handle_id)`, where `handle_id` is the id of the Handle object as returned by `spl_object_id()`.
   Caution should be taken when the class of the tracked object implements `__set()`.
+
+Memory level logs `memory_get_usage()` and `memory_get_peak_usage()`.
+In the message:
+```
+[15:07:59.134][Memory]  495.39K (+ 495.39K), P:  558.25K, R:    2.00M (    0.00B), P:    2.00M (tags: tag1)
+```
+`P:` is the peak memory, `R:` is real memory (`memory_get_usage(true)`), `(+ 495.39K)` is the change from previous memory log.
+If `$real` is `true`, only real usage is logged.
+
+#### Adjust log level
+Logging level is set with:
+```php
+public static function level(int $level);
+```
+Level are available through constants
+- `Logger::SILENT`,`Logger::ERROR`,`Logger::WARNING`,`Logger::INFO`,
+  `Logger::DEBUG`,`Logger::DESTRUCT`,`Logger::MEMORY`,`Logger::ALL`
+
 ---
 To be continued...
