@@ -5,7 +5,7 @@ The main purpose of this package is to provide simple logging/debugging from any
 The logger can be easily filtered, adjusted or switched off.
 
 Logging backends and message formatting are TBD and for now everything is printed on stdout.
-That might change, but the public api will not whithout a major version bump.
+That might change, but the public api will not without a major version bump.
 
 Currently messages look like this:
 ```
@@ -31,5 +31,12 @@ public static function destruct($object, string $msg='', string ...$tags);
 public static function memory(bool $real=false, string ...$tags);
 ```
 
+Destruct logs when objects are being destroyed, in three ways.
+- If `$object` is a string, it is assumed to be a class name and is just logged followed by the text in `$msg` argument.
+- If `$object` is an object and PHP version is 8+, the object is added to a [WeakMap](https://www.php.net/manual/en/class.weakmap.php)
+  and data is a Handle object which when destroyed, calls `destruct()` with the class name of the object being destructed.
+- If `$object` is an object and PHP version is 7.4, the Handle is set as a dynamic property to the object,
+  named `SharkyDog\Log\Handle(handle_id)`, where `handle_id` is the id of the Handle object as returned by `spl_object_id()`.
+  Caution should be taken when the class of the tracked object implements `__set()`.
 ---
 To be continued...
