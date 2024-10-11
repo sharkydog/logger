@@ -52,9 +52,37 @@ Logging level is set with:
 ```php
 public static function level(int $level);
 ```
-Level are available through constants
+Level constants are available:
 - `Logger::SILENT`,`Logger::ERROR`,`Logger::WARNING`,`Logger::INFO`,
   `Logger::DEBUG`,`Logger::DESTRUCT`,`Logger::MEMORY`,`Logger::ALL`
 
----
-To be continued...
+Default is `Logger::WARNING`, only errors and warnings.
+```php
+Logger::level(Logger::DEBUG);
+```
+This will set the level to debug and everything will be logged, except destruct and memory messages.
+
+#### Filters
+Filters are callbacks executed on every message, they are added with:
+```php
+public static function filter(int $level, callable $filter);
+```
+Filters can be added for a specific level or for all (`Logger::ALL`).
+They should follow the signature:
+```php
+function(string $msg, array $tags, int $level): false|void;
+```
+Filters are called in order they were added.
+Returning boolean `false` will stop processing the message, no more filters will be executed and the message is discarded.
+You can do whatever you like with the message (and tags) before returning `false`, like save it to a file or dump it to a proper logger.
+A message will reach filters only if the level is set to accept it.
+```php
+// Print only warning and info
+Logger::level(Logger::INFO);
+Logger::filter(Logger::ERROR, function($msg,$tags) {
+  // do something with errors
+});
+Logger::filter(Logger::ALL, function($msg,$tags,$level) {
+  if($level < Logger::WARNING) return false;
+});
+```
